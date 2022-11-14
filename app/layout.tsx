@@ -3,29 +3,32 @@ import RootStyleRegistry from './RootStyleRegistry';
 import Footer from './Footer';
 import Header from './Header';
 import Sidebar from './Sidebar';
+import ReactQueryWrapper from './ReactQueryWrapper';
 
-export default function RootLayout({
-  children
-}: {
+type Props = {
   children: React.ReactNode;
-}) {
-  return (
-    <html>
-      <head>
-        <title>Preface</title>
-      </head>
-      <body>
+};
+
+const RootLayout = ({ children }: Props) => (
+  <html>
+    <head>
+      <title>Preface</title>
+    </head>
+    <body>
+      <ReactQueryWrapper>
         <RootStyleRegistry>
           <div className="flex w-full h-screen">
             <Sidebar />
-            <div className="bg-gray w-full">
+            <div className="flex flex-col bg-gray w-full ">
               <Header />
-              {children}
+              <div className="flex-1">{children}</div>
               <Footer />
             </div>
           </div>
         </RootStyleRegistry>
-      </body>
-    </html>
-  );
-}
+      </ReactQueryWrapper>
+    </body>
+  </html>
+);
+
+export default RootLayout;
