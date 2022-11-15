@@ -1,7 +1,7 @@
 'use client';
 
-import { accountService } from '../../service/AccountService';
-import { queryKeys } from './../../lib/react-query/constants';
+import { accountService } from '../../../service/AccountService';
+import { queryKeys } from '../../../lib/react-query/constants';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 
@@ -18,16 +18,16 @@ const fetchAccounts = async (currentPage: number) => {
 export const useAccounts = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
 
-  useEffect(() => {
-    if (currentPage < maxAccountsPage) {
-      const nextPage = currentPage + 1;
-      queryClient.prefetchQuery([queryKeys.accounts, nextPage], () =>
-        fetchAccounts(nextPage)
-      );
-    }
-  }, [currentPage]);
+  // useEffect(() => {
+  //   if (currentPage < maxAccountsPage) {
+  //     const nextPage = currentPage + 1;
+  //     queryClient.prefetchQuery([queryKeys.accounts, nextPage], () =>
+  //       fetchAccounts(nextPage)
+  //     );
+  //   }
+  // }, [currentPage]);
 
   const { data } = useQuery(
     [queryKeys.accounts, currentPage],
@@ -37,5 +37,6 @@ export const useAccounts = () => {
       keepPreviousData: true
     }
   );
+
   return { data, currentPage, setCurrentPage };
 };

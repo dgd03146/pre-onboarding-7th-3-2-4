@@ -11,6 +11,6 @@ export class APIServiceImpl extends HttpClientImpl implements APIService {
   }
 
   fetch = <T>(endPoint: string) => {
-    return this.instance.get<T>(this.baseURL + endPoint);
+    return this.instance.get<T>(endPoint);
   };
 }

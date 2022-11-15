@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { MenuBar } from '../utils/constants';
+import { MenuBar } from '../../utils/constants';
 
 const Sidebar = () => {
   const router = useRouter();

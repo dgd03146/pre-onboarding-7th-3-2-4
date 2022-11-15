@@ -13,17 +13,22 @@ class AccountServiceImpl<T> implements AccountService<T> {
   }
 
   async searchAccount(query: string) {
-    const { data } = await this.api.fetch<T>(`accounts?q=${query}`);
+    const { data } = await this.api.fetch<T>(`/accounts?q=${query}`);
     return data;
   }
 
   async getAccountList(page: number, limit: number) {
     const { data } = await this.api.fetch<T>(
-      `accounts?_page=${page}&_limit=${limit}`
+      `/accounts?_page=${page}&_limit=${limit}`
     );
+    return data;
+  }
+
+  async getAccountTest() {
+    const { data } = await this.api.fetch<T>(`/accounts`);
     return data;
   }
 }
 
-const api = new APIServiceImpl('http://localhost:4000/');
+const api = new APIServiceImpl('/api');
 export const accountService = new AccountServiceImpl(api);
