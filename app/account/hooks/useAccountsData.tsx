@@ -11,14 +11,16 @@ import {
   getDate
 } from '../../../utils';
 
-type AccountData = {
+interface IAccount {
   accounts: AccountType[];
-  // currentPage: number;
-  // setCurrentPage: Dispatch<SetStateAction<number>>;
-};
+  currentPage: number;
+  setCurrentPage: Dispatch<SetStateAction<number>>;
+  isLast: boolean;
+}
 
 const useAccountsData = () => {
-  const { accounts }: AccountData = useAccounts();
+  const { accounts, currentPage, setCurrentPage, isLast }: IAccount =
+    useAccounts();
 
   const newAccounts = accounts.map(
     ({
@@ -48,7 +50,7 @@ const useAccountsData = () => {
     }
   );
 
-  return { newAccounts };
+  return { newAccounts, currentPage, setCurrentPage, isLast };
 };
 
 export default useAccountsData;

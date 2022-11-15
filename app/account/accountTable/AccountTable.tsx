@@ -6,10 +6,12 @@ import { useAccounts } from '../api/useAccounts';
 import useAccountsData from '../hooks/useAccountsData';
 
 const AccountTable = () => {
-  const { currentPage, setCurrentPage } = useAccounts();
-  const { newAccounts: accounts } = useAccountsData();
-
-  console.log(accounts, 'accounts');
+  const {
+    newAccounts: accounts,
+    currentPage,
+    setCurrentPage,
+    isLast
+  } = useAccountsData();
 
   return (
     <div className="bg-white p-8 rounded-md w-full">
@@ -117,21 +119,30 @@ const AccountTable = () => {
             {/* prev, next button */}
             <div className="px-5 py-5 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between          ">
               <span className="text-xs xs:text-sm text-gray-900">
-                Showing 1 to 4 of 50 Entries
+                {currentPage}
               </span>
               <div className="inline-flex mt-2 xs:mt-0">
-                <button className="text-sm text-indigo-50 transition duration-150 hover:bg-indigo-500 bg-indigo-600 font-semibold py-2 px-4 rounded-l">
-                  Prev
-                </button>
-                &nbsp; &nbsp;
-                <button
-                  className="text-sm text-indigo-50 transition duration-150 hover:bg-indigo-500 bg-indigo-600 font-semibold py-2 px-4 rounded-r"
-                  onClick={() => {
-                    setCurrentPage((previousValue) => previousValue + 1);
-                  }}
-                >
-                  Next
-                </button>
+                {currentPage > 1 && (
+                  <button
+                    className="text-sm text-indigo-50 transition duration-150 hover:bg-indigo-500 bg-indigo-600 font-semibold py-2 px-4 rounded-l"
+                    onClick={() => {
+                      setCurrentPage((prev) => prev - 1);
+                    }}
+                  >
+                    Prev
+                  </button>
+                )}
+
+                {!isLast && (
+                  <button
+                    className="text-sm text-indigo-50 transition duration-150 hover:bg-indigo-500 bg-indigo-600 font-semibold py-2 px-4 rounded-r"
+                    onClick={() => {
+                      setCurrentPage((prev) => prev + 1);
+                    }}
+                  >
+                    Next
+                  </button>
+                )}
               </div>
             </div>
           </div>
