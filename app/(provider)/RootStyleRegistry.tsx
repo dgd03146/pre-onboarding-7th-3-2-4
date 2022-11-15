@@ -1,6 +1,6 @@
 'use client';
 
-import { useStyledComponentsRegistry } from '../lib/styled-componets';
+import { useStyledComponentsRegistry } from '../../styles/styled-componets';
 import { useServerInsertedHTML } from 'next/navigation';
 
 export default function RootStyleRegistry({

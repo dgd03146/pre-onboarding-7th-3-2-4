@@ -1,9 +1,10 @@
+import { AccountType } from './../types/type.d';
 import { APIServiceImpl } from './../lib/api/API';
 
 interface AccountService<T> {
   readonly api: APIServiceImpl;
   searchAccount(query: string): Promise<T>;
-  getAccountList(page: number, limit: number): Promise<T>;
+  getAccountList(page: number, limit: number): Promise<AccountType[]>;
 }
 
 class AccountServiceImpl<T> implements AccountService<T> {
@@ -18,14 +19,9 @@ class AccountServiceImpl<T> implements AccountService<T> {
   }
 
   async getAccountList(page: number, limit: number) {
-    const { data } = await this.api.fetch<T>(
+    const { data } = await this.api.fetch<AccountType[]>(
       `/accounts?_page=${page}&_limit=${limit}`
     );
-    return data;
-  }
-
-  async getAccountTest() {
-    const { data } = await this.api.fetch<T>(`/accounts`);
     return data;
   }
 }

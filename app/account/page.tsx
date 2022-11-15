@@ -1,7 +1,12 @@
 import React from 'react';
+import AccountTable from './accountTable/AccountTable';
 
-const Accounts = () => {
-  return <div>Accounts</div>;
+const Account = () => {
+  return (
+    <div>
+      <AccountTable />
+    </div>
+  );
 };
 
-export default Accounts;
+export default Account;

@@ -32,7 +32,7 @@ export abstract class HttpClientImpl implements HttpClient {
   private handleRequest = (config: AxiosRequestConfig) => {
     // FIXME: accessToken
     const accessToken =
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im5ld2ZhY2VAZGNvLmNvbSIsImlhdCI6MTY2ODQ3Mzg2OSwiZXhwIjoxNjY4NDc3NDY5LCJzdWIiOiIxMDEifQ.Hn2JIkWkMXkhXiVKeutr4Qv7RQg0VtjQ0EZzo_afp9Q';
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im5ld2ZhY2VAZGNvLmNvbSIsImlhdCI6MTY2ODUwMjM5MCwiZXhwIjoxNjY4NTA1OTkwLCJzdWIiOiIxMDEifQ.FwwRdS9Z9RubO5OgjSrXYGNPvpfdVghfOsCZU8JsDEg';
 
     if (accessToken && config.headers) {
       config.headers['Authorization'] = `Bearer ${accessToken}`;
