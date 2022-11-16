@@ -37,8 +37,11 @@ const AccountTable = () => {
 
   const onChangeFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
     if (e.target.value === 'ALL') {
+      console.log(e.target.name);
+
       const newQuery = deleteQueryStringKey(e.target.name, query);
-      setQuery(newQuery);
+
+      setQuery({ ...query, ...newQuery });
       return;
     }
     setQuery({ ...query, [e.target.name]: e.target.value, _page: 1 });
