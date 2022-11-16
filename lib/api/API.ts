@@ -1,8 +1,12 @@
+import { PageAccountsQuery } from '../interfaces/querys';
 import { AxiosResponse } from 'axios';
 import { HttpClientImpl } from './HttpClient';
 
 interface APIService {
-  fetch: <T>(endPoint: string) => Promise<AxiosResponse<T, any>>;
+  fetch: <T>(
+    endPoint: string,
+    params: PageAccountsQuery
+  ) => Promise<AxiosResponse<T, any>>;
 }
 
 export class APIServiceImpl extends HttpClientImpl implements APIService {
@@ -10,7 +14,7 @@ export class APIServiceImpl extends HttpClientImpl implements APIService {
     super(baseURL);
   }
 
-  fetch = <T>(endPoint: string) => {
-    return this.instance.get<T>(endPoint);
+  fetch = <T>(endPoint: string, params: PageAccountsQuery) => {
+    return this.instance.get<T>(endPoint, { params });
   };
 }

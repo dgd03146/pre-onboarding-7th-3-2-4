@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction } from 'react';
-import { AccountType } from '../../../types/type';
+import { AccountType } from '../../../lib/types/type';
 import { useAccounts } from '../api/useAccounts';
 
 import {
@@ -10,19 +10,20 @@ import {
   changeToBrokerName,
   getDate
 } from '../../../utils';
+import { PageAccountsQuery } from '../../../lib/interfaces/querys';
 
 interface IAccount {
   accounts: AccountType[];
-  currentPage: number;
-  setCurrentPage: Dispatch<SetStateAction<number>>;
   isLast: boolean;
-  setQuery: Dispatch<SetStateAction<string>>;
+  query: PageAccountsQuery;
+  setQuery: Dispatch<SetStateAction<PageAccountsQuery>>;
 }
 
+// FIXME: 이 훅에서 굳이 로직을 거칠 필요가?
 const useAccountsData = () => {
-  const { accounts, currentPage, setCurrentPage, isLast, setQuery }: IAccount =
-    useAccounts();
+  const { accounts, isLast, query, setQuery }: IAccount = useAccounts();
 
+  // utils에 함수로 빼서 사용 가능
   const newAccounts = accounts.map(
     ({
       uuid,
@@ -51,7 +52,7 @@ const useAccountsData = () => {
     }
   );
 
-  return { newAccounts, currentPage, setCurrentPage, isLast, setQuery };
+  return { newAccounts, isLast, query, setQuery };
 };
 
 export default useAccountsData;

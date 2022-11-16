@@ -1,21 +1,21 @@
 'use client';
 import { useRouter } from 'next/navigation';
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import React, { Dispatch, SetStateAction, useState, useRef } from 'react';
 import { AccountCategory } from '../../../utils/constants';
 import { useAccounts } from '../api/useAccounts';
 import { useSearchParams } from 'next/navigation';
 import useAccountsData from '../hooks/useAccountsData';
+import { Brokers } from '../../../utils/account/changeToBrokerName';
+import { AccountStatus } from '../../../utils/account/getAccountStatus';
+import {
+  AccountsQuery,
+  PageAccountsQuery
+} from '../../../lib/interfaces/querys';
+import { deleteQueryStringKey } from '../../../utils/account/deleteQueryStringKey';
 
 const AccountTable = () => {
   const [searchValue, setSearchValue] = useState<string>();
-
-  const {
-    newAccounts: accounts,
-    currentPage,
-    setCurrentPage,
-    isLast,
-    setQuery
-  } = useAccountsData();
+  const { newAccounts: accounts, isLast, query, setQuery } = useAccountsData();
 
   const onKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
@@ -25,23 +25,28 @@ const AccountTable = () => {
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
-
     setSearchValue(e.target.value);
   };
 
   const onSearch = () => {
-    if (searchValue) {
-      setQuery(searchValue);
+    if (searchValue || searchValue === '') {
+      setQuery({ ...query, q: searchValue, _page: 1 });
+      setSearchValue('');
     }
+  };
+
+  const onChangeFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    if (e.target.value === 'ALL') {
+      const newQuery = deleteQueryStringKey(e.target.name, query);
+      setQuery(newQuery);
+      return;
+    }
+    setQuery({ ...query, [e.target.name]: e.target.value, _page: 1 });
   };
 
   return (
     <div className="bg-white p-8 rounded-md w-full">
       <div className=" flex items-center justify-between pb-6">
-        {/* <div>
-          <h2 className="text-gray-600 font-semibold">Products Oder</h2>
-          <span className="text-xs">All products item</span>
-        </div> */}
         <div className="flex items-center justify-between">
           <div className="flex bg-gray-50 items-center p-2 rounded-md">
             <input
@@ -49,6 +54,7 @@ const AccountTable = () => {
               type="text"
               placeholder="search..."
               onChange={onChange}
+              value={searchValue || ''}
               onKeyPress={onKeyPress}
             />
             <button onClick={onSearch}>
@@ -67,7 +73,36 @@ const AccountTable = () => {
               </svg>
             </button>
           </div>
-          {/* TODO: filter 추가 */}
+          <div className="flex gap-2">
+            <div>
+              <select name="broker_id" onChange={onChangeFilter}>
+                <option value="ALL">브로커명</option>
+                {/* FIXME: 객체로 되어있는거 고치기 */}
+                {Object.entries(Brokers).map((it) => (
+                  <option key={it[0]} value={it[0]}>
+                    {it[1]}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <select name="is_active" onChange={onChangeFilter}>
+                <option value="ALL">계좌 활성화 여부</option>
+                <option value="true">O</option>
+                <option value="false">X</option>
+              </select>
+            </div>
+            <div>
+              <select name="status" onChange={onChangeFilter}>
+                <option value="ALL">계좌 상태</option>
+                {Object.entries(AccountStatus).map((it) => (
+                  <option key={it[0]} value={it[0]}>
+                    {it[1]}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
         </div>
       </div>
       <div>
@@ -143,14 +178,14 @@ const AccountTable = () => {
             {/* prev, next button */}
             <div className="px-5 py-5 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between          ">
               <span className="text-xs xs:text-sm text-gray-900">
-                {currentPage}
+                {query._page}
               </span>
               <div className="inline-flex mt-2 xs:mt-0">
-                {currentPage > 1 && (
+                {query._page > 1 && (
                   <button
                     className="text-sm text-indigo-50 transition duration-150 hover:bg-indigo-500 bg-indigo-600 font-semibold py-2 px-4 rounded-l"
                     onClick={() => {
-                      setCurrentPage((prev) => prev - 1);
+                      setQuery({ ...query, _page: query._page - 1 });
                     }}
                   >
                     Prev
@@ -161,7 +196,7 @@ const AccountTable = () => {
                   <button
                     className="text-sm text-indigo-50 transition duration-150 hover:bg-indigo-500 bg-indigo-600 font-semibold py-2 px-4 rounded-r"
                     onClick={() => {
-                      setCurrentPage((prev) => prev + 1);
+                      setQuery({ ...query, _page: query._page + 1 });
                     }}
                   >
                     Next

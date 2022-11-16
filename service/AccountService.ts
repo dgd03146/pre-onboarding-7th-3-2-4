@@ -1,10 +1,11 @@
-import { AccountType } from './../types/type.d';
+import { PageAccountsQuery } from '../lib/interfaces/querys';
+import { AccountType } from '../lib/types/type';
 import { APIServiceImpl } from './../lib/api/API';
 
 interface AccountService<T> {
   readonly api: APIServiceImpl;
-  searchAccount(query: string): Promise<T>;
-  getAccountList(page: number, limit: number): Promise<AccountType[]>;
+
+  getAccountList(params: PageAccountsQuery): Promise<AccountType[]>;
 }
 
 class AccountServiceImpl<T> implements AccountService<T> {
@@ -13,24 +14,13 @@ class AccountServiceImpl<T> implements AccountService<T> {
     this.api = api;
   }
 
-  async searchAccount(query: string) {
-    const { data } = await this.api.fetch<T>(`/accounts?q=${query}`);
-    return data;
-  }
-
-  async getAccountList(page: number, limit: number, query?: string) {
-    if (query) {
-      const { data } = await this.api.fetch<AccountType[]>(
-        `/accounts?q=${query}&_page=${page}&_limit=${limit}`
-      );
-      return data;
-    }
-    const { data } = await this.api.fetch<AccountType[]>(
-      `/accounts?&_page=${page}&_limit=${limit}`
-    );
+  async getAccountList(params: PageAccountsQuery) {
+    const { data } = await this.api.fetch<AccountType[]>(`/accounts`, params);
     return data;
   }
 }
 
 const api = new APIServiceImpl('/api');
 export const accountService = new AccountServiceImpl(api);
+
+// http://localhost:4000/accounts?&broker_id=${broker_id}&status={status}&is_active={is_active}&q=&_page={page}&_limit=${limit}

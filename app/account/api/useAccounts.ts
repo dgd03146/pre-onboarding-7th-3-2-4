@@ -8,31 +8,33 @@ import {
   UseQueryResult
 } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
-import { AccountType } from '../../../types/type';
+import { AccountType } from '../../../lib/types/type';
+import { PageAccountsQuery } from '../../../lib/interfaces/querys';
 
-const limit = 10;
+const InitialPage = { _page: 1, _limit: 10 };
 
-const fetchAccounts = async (currentPage: number, query?: string) => {
-  // TODO: try catch error처리
-  const res: AccountType[] = await accountService.getAccountList(
-    currentPage,
-    limit,
-    query
-  );
-
+const fetchAccounts = async (query: PageAccountsQuery) => {
+  const res: AccountType[] = await accountService.getAccountList({
+    ...query
+  });
   return res;
 };
 
 export const useAccounts = () => {
-  const [currentPage, setCurrentPage] = useState(1);
+  const { _page, _limit } = InitialPage;
   const [isLast, setIsLast] = useState(false);
-  const [query, setQuery] = useState<string>('');
+  const [query, setQuery] = useState<PageAccountsQuery>({
+    _page,
+    _limit
+  });
 
-  const queryClient = useQueryClient();
+  // TODO: 객체
+
+  // const queryClient = useQueryClient();
 
   const res = useQuery(
-    [queryKeys.accounts, currentPage, query],
-    () => fetchAccounts(currentPage, query),
+    [queryKeys.accounts, query],
+    () => fetchAccounts(query),
     {
       staleTime: 2000,
       keepPreviousData: true
@@ -41,22 +43,27 @@ export const useAccounts = () => {
 
   const accounts: AccountType[] = res.data!;
 
+  // FIXME: 로직 수정하기
   useEffect(() => {
-    if (accounts.length < limit) {
+    if (accounts.length < _limit) {
       setIsLast(true);
     } else {
       setIsLast(false);
     }
   }, [accounts.length]);
 
-  useEffect(() => {
-    if (accounts.length === limit) {
-      const nextPage = currentPage + 1;
-      queryClient.prefetchQuery([queryKeys.accounts, nextPage, query], () =>
-        fetchAccounts(nextPage, query)
-      );
-    }
-  }, [currentPage]);
+  // FIXME: page만 올라가게?
+  // useEffect(() => {
+  //   if (accounts.length === _limit) {
+  //     setQuery((prev) => {
+  //       return { ...prev, _page: prev._page + 1 };
+  //     });
 
-  return { accounts, currentPage, setCurrentPage, isLast, setQuery };
+  //     queryClient.prefetchQuery([queryKeys.accounts, query], () =>
+  //       fetchAccounts(query)
+  //     );
+  //   }
+  // }, [query]);
+
+  return { accounts, query, setQuery, isLast };
 };
