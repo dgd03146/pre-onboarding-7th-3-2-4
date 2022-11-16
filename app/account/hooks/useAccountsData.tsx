@@ -16,10 +16,11 @@ interface IAccount {
   currentPage: number;
   setCurrentPage: Dispatch<SetStateAction<number>>;
   isLast: boolean;
+  setQuery: Dispatch<SetStateAction<string>>;
 }
 
 const useAccountsData = () => {
-  const { accounts, currentPage, setCurrentPage, isLast }: IAccount =
+  const { accounts, currentPage, setCurrentPage, isLast, setQuery }: IAccount =
     useAccounts();
 
   const newAccounts = accounts.map(
@@ -50,7 +51,7 @@ const useAccountsData = () => {
     }
   );
 
-  return { newAccounts, currentPage, setCurrentPage, isLast };
+  return { newAccounts, currentPage, setCurrentPage, isLast, setQuery };
 };
 
 export default useAccountsData;

@@ -1,17 +1,39 @@
 'use client';
-import React, { Dispatch, SetStateAction } from 'react';
+import { useRouter } from 'next/navigation';
+import React, { Dispatch, SetStateAction, useState } from 'react';
 import { AccountCategory } from '../../../utils/constants';
 import { useAccounts } from '../api/useAccounts';
-
+import { useSearchParams } from 'next/navigation';
 import useAccountsData from '../hooks/useAccountsData';
 
 const AccountTable = () => {
+  const [searchValue, setSearchValue] = useState<string>();
+
   const {
     newAccounts: accounts,
     currentPage,
     setCurrentPage,
-    isLast
+    isLast,
+    setQuery
   } = useAccountsData();
+
+  const onKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      onSearch();
+    }
+  };
+
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+
+    setSearchValue(e.target.value);
+  };
+
+  const onSearch = () => {
+    if (searchValue) {
+      setQuery(searchValue);
+    }
+  };
 
   return (
     <div className="bg-white p-8 rounded-md w-full">
@@ -22,26 +44,28 @@ const AccountTable = () => {
         </div> */}
         <div className="flex items-center justify-between">
           <div className="flex bg-gray-50 items-center p-2 rounded-md">
-            {/* FIXME: 컴포넌트로 SVG 바꾸기 */}
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 text-gray-400"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fillRule="evenodd"
-                d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                clipRule="evenodd"
-              />
-            </svg>
             <input
               className="bg-gray-50 outline-none ml-1 block "
               type="text"
-              name=""
-              id=""
               placeholder="search..."
+              onChange={onChange}
+              onKeyPress={onKeyPress}
             />
+            <button onClick={onSearch}>
+              {/* FIXME: 컴포넌트로 SVG 바꾸기 */}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5 text-gray-400"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </button>
           </div>
           {/* TODO: filter 추가 */}
         </div>

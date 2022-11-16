@@ -12,11 +12,12 @@ import { AccountType } from '../../../types/type';
 
 const limit = 10;
 
-const fetchAccounts = async (currentPage: number) => {
+const fetchAccounts = async (currentPage: number, query?: string) => {
   // TODO: try catch error처리
   const res: AccountType[] = await accountService.getAccountList(
     currentPage,
-    limit
+    limit,
+    query
   );
 
   return res;
@@ -25,12 +26,13 @@ const fetchAccounts = async (currentPage: number) => {
 export const useAccounts = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isLast, setIsLast] = useState(false);
+  const [query, setQuery] = useState<string>('');
 
   const queryClient = useQueryClient();
 
   const res = useQuery(
-    [queryKeys.accounts, currentPage],
-    () => fetchAccounts(currentPage),
+    [queryKeys.accounts, currentPage, query],
+    () => fetchAccounts(currentPage, query),
     {
       staleTime: 2000,
       keepPreviousData: true
@@ -49,13 +51,12 @@ export const useAccounts = () => {
 
   useEffect(() => {
     if (accounts.length === limit) {
-      console.log('prefetching 중');
       const nextPage = currentPage + 1;
-      queryClient.prefetchQuery([queryKeys.accounts, nextPage], () =>
-        fetchAccounts(nextPage)
+      queryClient.prefetchQuery([queryKeys.accounts, nextPage, query], () =>
+        fetchAccounts(nextPage, query)
       );
     }
   }, [currentPage]);
 
-  return { accounts, currentPage, setCurrentPage, isLast };
+  return { accounts, currentPage, setCurrentPage, isLast, setQuery };
 };

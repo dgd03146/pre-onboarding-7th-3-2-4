@@ -18,9 +18,15 @@ class AccountServiceImpl<T> implements AccountService<T> {
     return data;
   }
 
-  async getAccountList(page: number, limit: number) {
+  async getAccountList(page: number, limit: number, query?: string) {
+    if (query) {
+      const { data } = await this.api.fetch<AccountType[]>(
+        `/accounts?q=${query}&_page=${page}&_limit=${limit}`
+      );
+      return data;
+    }
     const { data } = await this.api.fetch<AccountType[]>(
-      `/accounts?_page=${page}&_limit=${limit}`
+      `/accounts?&_page=${page}&_limit=${limit}`
     );
     return data;
   }
