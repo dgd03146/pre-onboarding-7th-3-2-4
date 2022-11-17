@@ -1,6 +1,6 @@
 export type AccountType = {
-  id: number;
-  user_id: number;
+  id?: string;
+  user_id: string;
   uuid: string;
   broker_id: TBrokersKey;
   status: TAccountStatusValue;
@@ -8,9 +8,9 @@ export type AccountType = {
   name: string;
   assets: string;
   payments: string;
-  is_active: boolean;
+  is_active: string;
   created_at: Date;
-  updated_at?: Date;
+  updated_at: Date;
 };
 
 export type UserType = {

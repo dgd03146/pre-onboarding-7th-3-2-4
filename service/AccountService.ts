@@ -2,16 +2,21 @@ import { PageAccountsQuery } from '../lib/interfaces/querys';
 import { AccountType } from '../lib/types/type';
 import { APIServiceImpl } from './../lib/api/API';
 
-interface AccountService<T> {
+interface AccountService {
   readonly api: APIServiceImpl;
 
   getAccountList(params: PageAccountsQuery): Promise<AccountType[]>;
 }
 
-class AccountServiceImpl<T> implements AccountService<T> {
+class AccountServiceImpl implements AccountService {
   api;
   constructor(api: APIServiceImpl) {
     this.api = api;
+  }
+
+  async createAccount(account: AccountType) {
+    const { data } = await this.api.post<AccountType>(`/accounts`, account);
+    return data;
   }
 
   async getAccountList(params: PageAccountsQuery) {
@@ -22,5 +27,3 @@ class AccountServiceImpl<T> implements AccountService<T> {
 
 const api = new APIServiceImpl('/api');
 export const accountService = new AccountServiceImpl(api);
-
-// http://localhost:4000/accounts?&broker_id=${broker_id}&status={status}&is_active={is_active}&q=&_page={page}&_limit=${limit}

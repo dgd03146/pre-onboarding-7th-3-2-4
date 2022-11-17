@@ -1,19 +1,18 @@
 'use client';
-import { useRouter } from 'next/navigation';
-import React, { Dispatch, SetStateAction, useState, useRef } from 'react';
+
+import React, { useState } from 'react';
 import { AccountCategory } from '../../../utils/constants';
-import { useAccounts } from '../api/useAccounts';
-import { useSearchParams } from 'next/navigation';
 import useAccountsData from '../hooks/useAccountsData';
 import { Brokers } from '../../../utils/account/changeToBrokerName';
 import { AccountStatus } from '../../../utils/account/getAccountStatus';
-import {
-  AccountsQuery,
-  PageAccountsQuery
-} from '../../../lib/interfaces/querys';
 import { deleteQueryStringKey } from '../../../utils/account/deleteQueryStringKey';
+import Modal from '../../../components/Modal';
+import CreateAccount from '../createAccount/CreateAccount';
+import { useCreateAccount } from '../api/useCreateAccount';
 
 const AccountTable = () => {
+  const [showModal, setShowModal] = useState(false);
+
   const [searchValue, setSearchValue] = useState<string>();
   const { newAccounts: accounts, isLast, query, setQuery } = useAccountsData();
 
@@ -41,7 +40,7 @@ const AccountTable = () => {
 
       const newQuery = deleteQueryStringKey(e.target.name, query);
 
-      setQuery({ ...query, ...newQuery });
+      setQuery({ ...query, ...newQuery, _page: 1 });
       return;
     }
     setQuery({ ...query, [e.target.name]: e.target.value, _page: 1 });
@@ -50,10 +49,10 @@ const AccountTable = () => {
   return (
     <div className="bg-white p-8 rounded-md w-full">
       <div className=" flex items-center justify-between pb-6">
-        <div className="flex items-center justify-between">
-          <div className="flex bg-gray-50 items-center p-2 rounded-md">
+        <div className="flex items-center justify-between gap-5">
+          <div className="flex bg-gray-100 items-center p-2 rounded-md">
             <input
-              className="bg-gray-50 outline-none ml-1 block "
+              className="bg-gray-100 outline-none ml-1 block "
               type="text"
               placeholder="search..."
               onChange={onChange}
@@ -78,7 +77,11 @@ const AccountTable = () => {
           </div>
           <div className="flex gap-2">
             <div>
-              <select name="broker_id" onChange={onChangeFilter}>
+              <select
+                className="bg-gray-100 items-center p-2 rounded-md outline-none"
+                name="broker_id"
+                onChange={onChangeFilter}
+              >
                 <option value="ALL">브로커명</option>
                 {/* FIXME: 객체로 되어있는거 고치기 */}
                 {Object.entries(Brokers).map((it) => (
@@ -89,14 +92,22 @@ const AccountTable = () => {
               </select>
             </div>
             <div>
-              <select name="is_active" onChange={onChangeFilter}>
+              <select
+                className="bg-gray-100 items-center p-2 rounded-md outline-none"
+                name="is_active"
+                onChange={onChangeFilter}
+              >
                 <option value="ALL">계좌 활성화 여부</option>
                 <option value="true">O</option>
                 <option value="false">X</option>
               </select>
             </div>
             <div>
-              <select name="status" onChange={onChangeFilter}>
+              <select
+                className="bg-gray-100 items-center p-2 rounded-md outline-none"
+                name="status"
+                onChange={onChangeFilter}
+              >
                 <option value="ALL">계좌 상태</option>
                 {Object.entries(AccountStatus).map((it) => (
                   <option key={it[0]} value={it[0]}>
@@ -107,6 +118,17 @@ const AccountTable = () => {
             </div>
           </div>
         </div>
+        <button
+          className="bg-gray-800 hover:bg-gray-500 text-white font-bold py-2 px-2 rounded"
+          onClick={() => setShowModal(!showModal)}
+        >
+          계좌 생성
+        </button>
+        {showModal && (
+          <Modal closeModal={() => setShowModal(!showModal)}>
+            <CreateAccount />
+          </Modal>
+        )}
       </div>
       <div>
         <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
@@ -178,15 +200,14 @@ const AccountTable = () => {
                 ))}
               </tbody>
             </table>
-            {/* prev, next button */}
             <div className="px-5 py-5 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between          ">
               <span className="text-xs xs:text-sm text-gray-900">
                 {query._page}
               </span>
-              <div className="inline-flex mt-2 xs:mt-0">
+              <div className="inline-flex mt-2 xs:mt-0 gap-1">
                 {query._page > 1 && (
                   <button
-                    className="text-sm text-indigo-50 transition duration-150 hover:bg-indigo-500 bg-indigo-600 font-semibold py-2 px-4 rounded-l"
+                    className="bg-gray-800 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded"
                     onClick={() => {
                       setQuery({ ...query, _page: query._page - 1 });
                     }}
@@ -197,7 +218,7 @@ const AccountTable = () => {
 
                 {!isLast && (
                   <button
-                    className="text-sm text-indigo-50 transition duration-150 hover:bg-indigo-500 bg-indigo-600 font-semibold py-2 px-4 rounded-r"
+                    className="bg-gray-800 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded"
                     onClick={() => {
                       setQuery({ ...query, _page: query._page + 1 });
                     }}

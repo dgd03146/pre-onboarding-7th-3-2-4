@@ -46,7 +46,7 @@ const useAccountsData = () => {
         status: getAccountStatus(status),
         assets: getMoney(assets),
         payments: getMoney(payments),
-        is_active: is_active === true ? 'O' : 'X',
+        is_active: is_active === 'true' ? 'O' : 'X',
         created_at: getDate(created_at)
       };
     }
